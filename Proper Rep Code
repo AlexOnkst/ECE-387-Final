@@ -1,0 +1,84 @@
+int topRight = 0;
+int bottomRight = 1;
+int topLeft = 2;
+int bottomLeft = 3;
+int topRightValue = 0;
+int topLeftValue = 0;
+int bottomLeftValue = 0;
+int bottomRightValue = 0;
+int speaker = 8;
+
+int distanceThreshold = 350;
+
+boolean topRightFlag = false;
+boolean topLeftFlag = false;
+boolean bottomRightFlag = false;
+boolean bottomLeftFlag = false;
+
+void setup() {
+  // put your setup code here, to run once:
+Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  
+  //This code reads the sensor values of each of the 4 IR sensors used for measuring proper reps
+ topRightValue =  analogRead(topRight);
+ topLeftValue =  analogRead(topLeft);
+ bottomRightValue =  analogRead(bottomRight);
+ bottomLeftValue =  analogRead(bottomLeft);
+ 
+         //This code determines which of these 4 IR sensors are detecting an object in front of them
+         if (topRightValue >distanceThreshold) {
+          topRightFlag = true;
+         }
+         else {
+          topRightFlag = false;
+         }
+         
+         if (topLeftValue >distanceThreshold) {
+          topLeftFlag = true;
+         }
+         else {
+          topLeftFlag = false;
+         }
+         if (bottomRightValue >distanceThreshold) {
+          bottomRightFlag = true;
+         }
+         else {
+          bottomRightFlag = false;
+         }
+         if (bottomLeftValue >distanceThreshold) {
+          bottomLeftFlag = true;
+         }
+         else {
+          bottomLeftFlag = false;
+         }
+
+
+         //A high-pitch sound indicates that the user is leaning too much to the right, 
+         //i.e. the bottom left and top right sensors are reading that an object is present
+        if ((bottomLeftFlag == true && topRightFlag ==true)) {
+          tone(speaker, 1000, 500);
+         delay(1000);
+          tone(speaker, 1000, 500);
+         delay(1000);
+         tone(speaker, 1000, 500);
+         delay(1000);
+        }
+
+        //A low-pitch sound indicates that the user is leaning too much to the left,
+        //i.i the top left and bottom right sensors are reading that an object is present
+        if (bottomRightFlag == true && topLeftFlag == true) {
+          tone(speaker, 100, 500);
+         delay(1000);
+          tone(speaker, 100, 500);
+         delay(1000);
+         tone(speaker, 100, 500);
+         delay(1000);
+        }
+      
+     
+         
+}
