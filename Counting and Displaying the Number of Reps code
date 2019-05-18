@@ -1,0 +1,138 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 2, 4, 5, 6, 7); //12 = pin4, 6 = pin2, 11-14 = pin4-7, 
+
+int score = 0;
+int highscore = 0;
+int counter = 0;
+int randomCounter1 = 0;
+int randomCounter2 = 0;
+int bottomAnalogSensorPin = 1;
+int bottomSensorValue = 0;
+int topAnalogSensorPin = 0;
+int topSensorValue = 0;
+
+int leftAnalogPressurePin = 2;
+int rightAnalogPressurePin = 3;
+
+int leftAnalogPressureValue = 0;
+int rightAnalogPressureValue = 0;
+
+int pressureThreshold = 300;
+int distanceThreshold = 350;
+
+
+
+boolean betweenBothSensorsBeginning = true;
+boolean belowBothSensorsBeginning = false;
+
+
+
+
+void setup() {
+ lcd.begin(16, 2);
+        Serial.begin(9600);
+}
+
+void loop() {
+  
+        
+        
+        leftAnalogPressureValue = analogRead(leftAnalogPressurePin);
+        rightAnalogPressureValue = analogRead(rightAnalogPressurePin);
+
+
+
+
+     if ((leftAnalogPressureValue < pressureThreshold)&&(rightAnalogPressureValue < pressureThreshold)) {
+            betweenBothSensorsBeginning = true;
+            leftAnalogPressureValue = analogRead(leftAnalogPressurePin);
+              rightAnalogPressureValue = analogRead(rightAnalogPressurePin);
+      
+            while(betweenBothSensorsBeginning == true) {
+              
+              leftAnalogPressureValue = analogRead(leftAnalogPressurePin);
+              rightAnalogPressureValue = analogRead(rightAnalogPressurePin);
+             /* if ((leftAnalogPressureValue > pressureThreshold)||(rightAnalogPressureValue > pressureThreshold)) {
+                betweenBothSensorsBeginning = false;
+              }
+             */ 
+                       
+              bottomSensorValue = analogRead(bottomAnalogSensorPin);
+              
+              if (bottomSensorValue > distanceThreshold) {                  //This code starts a counter for when the threshold is reached
+                randomCounter1 = randomCounter1 +1;                         //Occasionally the threshold is reached randomly, so the counter
+              }                                                             //ensures that 3 instances of the loop must occur for the 
+              if (bottomSensorValue < distanceThreshold) {                  //loop to be exited
+                randomCounter1 = 0;
+              }
+              if (randomCounter1 >= 3) {
+              randomCounter1 = 0; 
+              belowBothSensorsBeginning = true;
+              betweenBothSensorsBeginning = false;
+              }
+              
+            } 
+
+            leftAnalogPressureValue = analogRead(leftAnalogPressurePin);
+            rightAnalogPressureValue = analogRead(rightAnalogPressurePin);
+            
+            while (belowBothSensorsBeginning == true) {
+              
+              leftAnalogPressureValue = analogRead(leftAnalogPressurePin);
+              rightAnalogPressureValue = analogRead(rightAnalogPressurePin);
+
+            /*  if ((leftAnalogPressureValue > pressureThreshold)||(rightAnalogPressureValue > pressureThreshold)) {
+                belowBothSensorsBeginning = false;
+              }
+             */ 
+              topSensorValue = analogRead(topAnalogSensorPin);
+
+              if (topSensorValue > distanceThreshold) {                    //This code starts a counter for when the threshold is reached
+                randomCounter2= randomCounter2 +1;                         //Occasionally the threshold is reached randomly, so the counter
+              }                                                            //ensures that 3 instances of the loop must occur for the 
+              if (topSensorValue < distanceThreshold) {                    //loop to be exited
+                randomCounter2 = 0;
+              }
+              if (randomCounter2 >= 3) {
+              score = score +1;
+              Serial.println(score);  
+              randomCounter2 = 0;  
+              lcd.print("# of Reps: ");
+              lcd.print(score);
+              delay(1000);
+              lcd.clear();
+              betweenBothSensorsBeginning = true;  
+              belowBothSensorsBeginning = false;
+              
+              }
+            } 
+         
+      }
+
+          //Serial.println(leftAnalogPressureValue);
+          //Serial.println(rightAnalogPressureValue);
+  /*    if ((leftAnalogPressureValue > pressureThreshold)||(rightAnalogPressureValue > pressureThreshold)) {
+        Serial.println(leftAnalogPressureValue);
+          Serial.println(rightAnalogPressureValue);
+  /*    if (score > highscore){
+          highscore = score;
+          lcd.clear();
+          lcd.print("New highscore!! ");
+          lcd.setCursor(0,1);
+          lcd.print("New highscore!! ");
+          delay(1000);
+          lcd.clear();
+        }
+        
+        lcd.print("Your score: ");
+        lcd.print(score);
+        lcd.setCursor(0,1);
+        lcd.print("Highscore: ");
+        lcd.print(highscore);
+        delay(1000);
+        lcd.clear();
+        score = 0;
+        }
+     */   
+}
